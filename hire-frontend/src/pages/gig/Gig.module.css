@@ -1,0 +1,112 @@
+.GigContainer {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.direction,
+.about {
+  font-weight: 300;
+  color: grey;
+  font-size: 0.8rem;
+}
+
+.menu {
+  margin-top: 2vh;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.price {
+  width: 30%;
+  height: 20%;
+  gap: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.price button {
+  background-color: #013914;
+  border: none;
+  color: white;
+  border-radius: 2px;
+  padding: 0.5rem;
+}
+
+.right {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort {
+  font-size: 0.8rem;
+}
+
+.sortType {
+  font-weight: 600;
+}
+
+.rightMenu {
+  display: flex;
+  flex-direction: column;
+  width: 10%;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  right: 0.5vw;
+  border: 1px solid lightgray;
+  background-color: white;
+  border-radius: 1px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.gigs {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  padding: 2%;
+  background-color: rgb(241, 241, 241);
+  border-radius: 2vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.gigCard {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateX(0);
+}
+
+.fadeIn {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fadeOut {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.next {
+  width: 5%;
+  height: 5%;
+  margin-top: 25vh;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.next:hover {
+  transform: scale(1.1);
+}

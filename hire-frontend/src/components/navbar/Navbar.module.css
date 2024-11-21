@@ -1,0 +1,112 @@
+/* Navbar.module.css */
+.navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #013914;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  transition: 0.5s all ease;
+}
+.activeNavbar {
+  background-color: white;
+  position: sticky;
+  color: black;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 20px;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-weight: 500;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dot {
+  color: green;
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.button:hover {
+  background-color: green;
+}
+
+.menu {
+  padding: 10px 2px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 300;
+  color: gray;
+}
+hr {
+  display: block; /* Ensure it behaves like a block element */
+  border: none;
+  border-top: 1px solid gray;
+  margin: 0;
+  width: 100vw;
+}
+.user {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.Img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.options {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  padding: 20px;
+  background-color: white;
+  border: 10px;
+  border: 1px solid lightgray;
+  display: flex;
+  flex-direction: column;
+  color: grey;
+  width: 100px;
+  font-weight: 200;
+}
+.user span {
+  cursor: pointer;
+}
+.join {
+  position: absolute;
+  top: 12vh;
+  right: 0;
+  padding: 20px;
+  background-color: white;
+  border: 10px;
+  border: 1px solid lightgray;
+  display: flex;
+  flex-direction: column;
+  color: grey;
+  width: 100px;
+  font-weight: 400;
+  font-size: 0.8rem;
+  border-radius: 2.5px;
+  cursor: pointer;
+}
