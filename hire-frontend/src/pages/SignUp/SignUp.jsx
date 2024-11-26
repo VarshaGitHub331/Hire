@@ -10,6 +10,7 @@ import FileModal from "./FileModal";
 import toast from "react-hot-toast";
 import CategoryModal from "./SelectCategories";
 import SkillModal from "./SelectSkills";
+import BudgetLinkedinModal from "./BudgetLinkedin";
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -29,6 +30,7 @@ export default function SignUp() {
   const [skillModal, setSkillModal] = useState(false);
   const [userSkills, setUserSkills] = useState([]);
   const [userCategories, setUserCategories] = useState([]);
+  const [budgetLinkedin, setBudgetLinkedin] = useState(false);
   const navigate = useNavigate();
 
   function toggleFileModal() {
@@ -43,6 +45,9 @@ export default function SignUp() {
   }
   function toggleSkillModal() {
     setSkillModal(!skillModal);
+  }
+  function toggleBudgetLinkedin() {
+    setBudgetLinkedin(!budgetLinkedin);
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -270,6 +275,15 @@ export default function SignUp() {
           userCategories={userCategories}
           userSkills={userSkills}
           setUserSkills={setUserSkills}
+          budgetLinkedin={budgetLinkedin}
+          setBudgetLinkedin={setBudgetLinkedin}
+        />
+      )}
+      {budgetLinkedin && (
+        <BudgetLinkedinModal
+          budgetLinkedin={budgetLinkedin}
+          setBudgetLinkedin={setBudgetLinkedin}
+          toggleBudgetLinkedin={toggleBudgetLinkedin}
         />
       )}
 

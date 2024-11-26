@@ -1,0 +1,88 @@
+.box {
+  background-color: white;
+  width: 45vw;
+  min-height: 40vh;
+  height: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  margin: auto;
+  margin-top: 25vh;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2vh;
+  position: relative;
+  padding: 2%;
+}
+.closeButton {
+  width: 10%;
+  height: 5%;
+  position: absolute;
+  font-size: 32px;
+  color: grey;
+  top: 7%;
+  right: 2%;
+  cursor: pointer;
+  background-color: white;
+  border: none;
+}
+.box h3 {
+  font-weight: 600;
+  margin-left: 9%;
+}
+.budget {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: auto;
+  gap: 2vh;
+}
+label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.linkedin {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: auto;
+  gap: 2vh;
+}
+input {
+  border: 2px solid hsl(120, 97%, 28%);
+  border-radius: 25px;
+  outline: none;
+  cursor: pointer;
+  padding: 4%;
+}
+.continue {
+  background-color: #1dbf73;
+  color: white;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  width: 10vw;
+  height: 7vh;
+  border-radius: 25px;
+  position: absolute;
+  right: 15%;
+  bottom: 5%;
+
+  cursor: pointer;
+}
+.skip {
+  background-color: white;
+  color: #1dbf73;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  width: 10vw;
+  height: 7vh;
+  border-radius: 25px;
+  position: absolute;
+  border: 2px solid hsl(120, 97%, 28%);
+  left: 5%;
+  bottom: 5%;
+
+  cursor: pointer;
+}

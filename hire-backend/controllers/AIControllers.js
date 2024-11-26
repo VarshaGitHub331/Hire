@@ -2,54 +2,45 @@ require("dotenv").config({ path: "../.env" });
 const axios = require("axios");
 
 // Set up your Hugging Face API key and model
-const API_KEY = process.env.HUGGINGFACE_KEY; // Replace with your actual API key
-const MODEL = "dbmdz/bert-large-cased-finetuned-conll03-english"; // NER model
+const API_KEY = process.env.NVIDIA_API_KEY; // Replace with your actual API key
+const OpenAI = require("openai");
 
-// Function to extract skills using Hugging Face's API
-async function extractSkillsWithHuggingFace(text) {
-  const url = `https://api-inference.huggingface.co/models/${MODEL}`;
+const openai = new OpenAI({
+  apiKey: `${API_KEY}`, // Replace with your OpenAI API key
+  baseURL: "https://integrate.api.nvidia.com/v1", // NVIDIA API endpoint
+});
+
+async function extractSkills(inputText) {
+  const prompt = `
+You are an AI trained to extract professional skills from text. 
+Only list the skills as a comma-separated string. Do not add any explanation.
+
+Text: "${inputText}"
+
+Skills:`;
 
   try {
-    const response = await axios.post(
-      url,
-      {
-        inputs: text,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const completion = await openai.chat.completions.create({
+      model: "meta/llama-3.1-405b-instruct", // Ensure the model name matches your API
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.0, // Deterministic output
+      top_p: 1.0, // Consider all relevant tokens
+      max_tokens: 100, // Limit to expected token range
+    });
 
-    // Log the response to inspect its structure
-    console.log("API Response:", response.data);
-
-    // Make sure the response structure is what we expect
-    if (response.data) {
-      // Extract entities and filter them to identify skills
-
-      const skills = response.data
-        .filter(
-          (entity) =>
-            entity.entity_group == "MISC" || entity.entity_group == "ORG"
-        )
-        .map((entity) => entity.word);
-
-      console.log("Extracted Skills:", skills);
-    } else {
-      console.log("No entities found in the response.");
-    }
+    // Extract and return skills from the model's response
+    const skills = completion.choices[0]?.message?.content.trim();
+    return skills;
   } catch (error) {
-    console.error(
-      "Error:",
-      error.response ? error.response.status : error.message
-    );
+    console.error("Error extracting skills:", error);
+    return null;
   }
 }
 
-// Example job description
-const jobDescription =
-  "We are looking for a full-stack developer with expertise in JavaScript, React, Node.js, and AWS. Experience with MongoDB is a plus.";
-extractSkillsWithHuggingFace(jobDescription);
+// Example usage
+(async () => {
+  const text =
+    "I am proficient in Python, React, machine learning, and cloud computing,deep learning,tensorflow,eating,sleeping,teaching";
+  const skills = await extractSkills(text);
+  console.log("Extracted Skills:", skills);
+})();

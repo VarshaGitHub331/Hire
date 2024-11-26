@@ -13,6 +13,8 @@ export default function SkillModal({
   userCategories,
   userSkills,
   setUserSkills,
+  budgetLinkedin,
+  setBudgetLinkedin,
 }) {
   const { data: skills, isLoading } = useQuery({
     queryFn: () => getSkills(userCategories),
@@ -51,6 +53,8 @@ export default function SkillModal({
     },
     onSuccess: () => {
       toast.success("Your Profile Has Been Updated");
+      setBudgetLinkedin(!budgetLinkedin);
+      setSkillModal(!skillModal);
     },
     onError: () => {
       toast.error("Some Error in Updating Profile");
