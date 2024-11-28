@@ -4,18 +4,19 @@ import { useState } from "react";
 import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
 import { useAuthContext } from "../../contexts/AuthContext";
-export default function BudgetLinkedinModal({
-  budgetLinkedin,
-  setBudgetLinkedin,
-  toggleBudgetLinkedin,
-}) {
+import { useDispatch, useSelector } from "react-redux";
+import { closeBudgetLinkedin } from "../../redux/modalSlice";
+import { setBudget } from "../../redux/signUpDataSlice";
+import { setLinkUrl } from "../../redux/signUpDataSlice";
+export default function BudgetLinkedinModal() {
   const server = process.env.REACT_APP_SERVER_URL;
   const { userState } = useAuthContext();
   const { user_id, token } = userState;
-  const [budget, setBudget] = useState();
-  const [linkUrl, setLinkUrl] = useState("");
+  const dispatch = useDispatch();
+  const budgetLikedin = useSelector((store) => store.modal.budgetLikedin);
+  const budget = useSelector((store) => store.signUpDetails.budget);
+  const linkUrl = useSelector((store) => store.signUpDetails.linkUrl);
   const AlterProfile = useMutation({
     mutationFn: () => {
       axios.post(
@@ -38,11 +39,18 @@ export default function BudgetLinkedinModal({
   });
   return (
     <Modal
-      onRequestClose={toggleBudgetLinkedin}
-      isOpen={budgetLinkedin}
+      onRequestClose={(e) => {
+        dispatch(closeBudgetLinkedin());
+      }}
+      isOpen={budgetLikedin}
       className={styles.box}
     >
-      <button onClick={toggleBudgetLinkedin} className={styles.closeButton}>
+      <button
+        onClick={(e) => {
+          dispatch(closeBudgetLinkedin());
+        }}
+        className={styles.closeButton}
+      >
         &times;
       </button>
       <div className={styles.budget}>
@@ -50,6 +58,7 @@ export default function BudgetLinkedinModal({
         <input
           type="number"
           id="budget"
+          value={budget}
           onChange={(e) => setBudget(e.target.value)}
         ></input>
       </div>
@@ -58,6 +67,7 @@ export default function BudgetLinkedinModal({
         <input
           type="text"
           id="linkedin"
+          value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
         ></input>
       </div>

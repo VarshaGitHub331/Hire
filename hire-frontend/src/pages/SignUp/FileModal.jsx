@@ -5,20 +5,23 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-export default function FileModal({
-  toggleFileModal,
-  selectedFile,
-  setSelectedFile,
-  fileModal,
-  setFileModal,
-  setResumeUrl,
-}) {
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedFile } from "../../redux/signUpDataSlice";
+import { openFileModal } from "../../redux/modalSlice";
+import { closeFileModal } from "../../redux/modalSlice";
+import { setResumeUrl } from "../../redux/signUpDataSlice";
+export default function FileModal() {
   const { userState } = useAuthContext();
   const { user_id, token } = userState;
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const selectedFile = useSelector((store) => {
+    console.log(store);
+    return store.signUpDetails.selectedFile;
+  });
+  const fileModal = useSelector((store) => store.modal.fileModal);
   function handleFileChange(e) {
-    setSelectedFile(e.target.files[0]);
+    dispatch(setSelectedFile(e.target.files[0]));
   }
   const handleFileUpload = async () => {
     const formData = new FormData();
@@ -37,9 +40,9 @@ export default function FileModal({
         }
       );
       console.log(response);
-      setResumeUrl(response.data.resumeUrl);
-      setFileModal(false);
-      setSelectedFile(null);
+      dispatch(setResumeUrl(response.data.resumeUrl));
+      dispatch(closeFileModal(false));
+      dispatch(setSelectedFile(null));
       toast.success("Your Resume has been uploaded!", {
         duration: 3000,
       });
@@ -50,12 +53,19 @@ export default function FileModal({
   return (
     <Modal
       isOpen={fileModal}
-      onRequestClose={toggleFileModal}
+      onRequestClose={(e) => {
+        dispatch(closeFileModal());
+      }}
       contentLabel="Upload Resume"
       className={styles.box}
     >
       <h3>Add Your Resume</h3>
-      <button onClick={toggleFileModal} className={styles.closeButton}>
+      <button
+        onClick={(e) => {
+          dispatch(closeFileModal());
+        }}
+        className={styles.closeButton}
+      >
         &times;
       </button>
       <div className={styles.uploadBox}>

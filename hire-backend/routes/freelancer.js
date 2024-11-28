@@ -39,7 +39,18 @@ FreelancerRouter.post(
     if (!req.resumeUrl) {
       res.status(400).json("No such file has been uploaded");
     }
-
+    try {
+      await Freelancer.update(
+        { resume: req.resumeUrl },
+        {
+          where: {
+            user_id: user_id,
+          },
+        }
+      );
+    } catch (e) {
+      next(e);
+    }
     // Send back the Cloudinary URL
     res.status(200).json({
       message: "Resume uploaded successfully!",

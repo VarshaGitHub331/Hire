@@ -6,16 +6,12 @@ import Modal from "react-modal";
 import axios from "axios";
 import { useAuthContext } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
-export default function SkillModal({
-  skillModal,
-  setSkillModal,
-  toggleSkillModal,
-  userCategories,
-  userSkills,
-  setUserSkills,
-  budgetLinkedin,
-  setBudgetLinkedin,
-}) {
+import { useSelector, useDispatch } from "react-redux";
+import { openSkillModal } from "../../redux/modalSlice";
+import { closeSkillModal } from "../../redux/modalSlice";
+import { openBudgetLinkedin } from "../../redux/modalSlice";
+import { setUserSkills } from "../../redux/signUpDataSlice";
+export default function SkillModal() {
   const { data: skills, isLoading } = useQuery({
     queryFn: () => getSkills(userCategories),
     queryKey: ["skills"],
@@ -26,7 +22,14 @@ export default function SkillModal({
   const [skillNeeded, setSkillNeeded] = useState("");
   const { userState } = useAuthContext();
   const { user_id, token } = userState;
+  const dispatch = useDispatch();
+  const skillModal = useSelector((store) => store.modal.skillModal);
 
+  const userCategories = useSelector(
+    (store) => store.signUpDetails.userCategories
+  );
+  const userSkills = useSelector((store) => store.signUpDetails.userSkills);
+  const budgetLinkedin = useSelector((store) => store.modal.budgetLinkedin);
   const handleSkillRequest = useCallback(() => {
     if (!skills || !skillNeeded) return [];
     const filteredSkills = skills.filter((skill) =>
@@ -53,8 +56,8 @@ export default function SkillModal({
     },
     onSuccess: () => {
       toast.success("Your Profile Has Been Updated");
-      setBudgetLinkedin(!budgetLinkedin);
-      setSkillModal(!skillModal);
+      dispatch(openBudgetLinkedin());
+      dispatch(closeSkillModal());
     },
     onError: () => {
       toast.error("Some Error in Updating Profile");
@@ -63,7 +66,9 @@ export default function SkillModal({
 
   return (
     <Modal
-      onRequestClose={toggleSkillModal}
+      onRequestClose={(e) => {
+        dispatch(closeSkillModal());
+      }}
       isOpen={skillModal}
       className={styles.box}
     >
@@ -104,7 +109,12 @@ export default function SkillModal({
           </div>
         ))}
       </div>
-      <button onClick={toggleSkillModal} className={styles.closeButton}>
+      <button
+        onClick={(e) => {
+          dispatch(closeSkillModal());
+        }}
+        className={styles.closeButton}
+      >
         &times;
       </button>
       <div className={styles.suggestBox}>

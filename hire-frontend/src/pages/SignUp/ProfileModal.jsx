@@ -4,26 +4,33 @@ import { useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-
-export default function ProfileModal({
-  toggleProfileModal,
-  profile,
-  setProfile,
-  profileModal,
-  setProfileModal,
-}) {
+import { useSelector, useDispatch } from "react-redux";
+import { openProfileModal } from "../../redux/modalSlice";
+import { closeProfileModal } from "../../redux/modalSlice";
+import { setProfile } from "../../redux/signUpDataSlice";
+export default function ProfileModal() {
   const { userState } = useAuthContext();
   const { user_id, token } = userState;
+  const dispatch = useDispatch();
+  const profileModal = useSelector((store) => store.modal.profileModal);
+  const profile = useSelector((store) => store.signUpDetails.profile);
 
   return (
     <Modal
       isOpen={profileModal}
-      onRequestClose={toggleProfileModal}
+      onRequestClose={(e) => {
+        dispatch(closeProfileModal());
+      }}
       contentLabel="Upload Resume"
       className={styles.box}
     >
       <h3>Enter A Brief Description Of Yourself</h3>
-      <button onClick={toggleProfileModal} className={styles.closeButton}>
+      <button
+        onClick={(e) => {
+          dispatch(closeProfileModal());
+        }}
+        className={styles.closeButton}
+      >
         &times;
       </button>
       <div className={styles.uploadBox}>
@@ -38,7 +45,7 @@ export default function ProfileModal({
             margin: "0.5rem",
           }}
           onChange={(e) => {
-            setProfile(e.target.value);
+            dispatch(setProfile(e.target.value));
           }}
         ></textarea>
       </div>
@@ -47,7 +54,7 @@ export default function ProfileModal({
         className={styles.continue}
         disabled={!profile}
         onClick={(e) => {
-          setProfileModal(false);
+          dispatch(closeProfileModal(false));
         }}
       >
         Continue

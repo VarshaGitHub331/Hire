@@ -11,6 +11,9 @@ import toast from "react-hot-toast";
 import CategoryModal from "./SelectCategories";
 import SkillModal from "./SelectSkills";
 import BudgetLinkedinModal from "./BudgetLinkedin";
+import { openCategoryModal, openFileModal } from "../../redux/modalSlice";
+import { openProfileModal } from "../../redux/modalSlice";
+import { useDispatch, useSelector } from "react-redux";
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -20,26 +23,12 @@ export default function SignUp() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { UserLogin, UserLogout, userState } = useAuthContext();
   const [step, setStep] = useState(1);
-  const [fileModal, setFileModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [resumeUrl, setResumeUrl] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [profileModal, setProfileModal] = useState(null);
   const { user_id, token } = userState;
-  const [categoryModal, setCategoryModal] = useState(false);
-  const [skillModal, setSkillModal] = useState(false);
-  const [userSkills, setUserSkills] = useState([]);
-  const [userCategories, setUserCategories] = useState([]);
   const [budgetLinkedin, setBudgetLinkedin] = useState(false);
   const navigate = useNavigate();
+  const resumeUrl = useSelector((store) => store.signUpDetails.resumeUrl);
+  const profile = useSelector((store) => store.signUpDetails.profile);
 
-  function toggleFileModal() {
-    setFileModal(!fileModal);
-    setSelectedFile(null);
-  }
-  function toggleProfileModal() {
-    setProfileModal(!profileModal);
-  }
   function toggleCategoryModal() {
     setCategoryModal(!categoryModal);
   }
@@ -83,6 +72,10 @@ export default function SignUp() {
       setFirstName("");
       setLastName("");
       setPassword("");
+      localStorage.setItem("name", currentUser.user_name);
+      localStorage.setItem("role", currentUser.role);
+      localStorage.setItem("user_id", currentUser.user_id);
+      localStorage.setItem("token", currentUser.token);
       setStep((step) => step + 1);
     } catch (e) {
       alert(e);
@@ -123,10 +116,10 @@ export default function SignUp() {
       alert(e);
     }
   };
-
+  const dispatch = useDispatch();
   return (
     <>
-      {step === 1 && (
+      {step === 1 && !token && (
         <div className={styles.SignUp}>
           <h4>Join Hire.</h4>
           <form onSubmit={handleSubmit}>
@@ -188,7 +181,7 @@ export default function SignUp() {
             <div
               className={styles.chooseGreen}
               onClick={(e) => {
-                setFileModal((profileModal) => !profileModal);
+                dispatch(openFileModal());
               }}
             >
               Upload Your Resume
@@ -196,7 +189,7 @@ export default function SignUp() {
             <div
               className={styles.chooseGreen}
               onClick={(e) => {
-                setProfileModal((profileModal) => !profileModal);
+                dispatch(openProfileModal());
               }}
             >
               Fill Out Manually (15 min)
@@ -216,7 +209,7 @@ export default function SignUp() {
             <div
               className={styles.chooseGreen}
               onClick={(e) => {
-                setCategoryModal((categoryModal) => true);
+                dispatch(openCategoryModal());
               }}
             >
               Profile Your Manually(10 mins)
@@ -224,7 +217,7 @@ export default function SignUp() {
             <div
               className={styles.chooseGreen}
               onClick={(e) => {
-                setCategoryModal((categoryModal) => !categoryModal);
+                dispatch(openCategoryModal());
               }}
             >
               Use AI
@@ -240,46 +233,11 @@ export default function SignUp() {
           </button>
         </div>
       )}
-      <FileModal
-        fileModal={fileModal}
-        setFileModal={setFileModal}
-        toggleFileModal={toggleFileModal}
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        resumeUrl={resumeUrl}
-        setResumeUrl={setResumeUrl}
-      />
-      <ProfileModal
-        profileModal={profileModal}
-        setProfileModal={setProfileModal}
-        toggleProfileModal={toggleProfileModal}
-        profile={profile}
-        setProfile={setProfile}
-      />
-      <CategoryModal
-        categoryModal={categoryModal}
-        setCategoryModal={setCategoryModal}
-        toggleCategoryModal={toggleCategoryModal}
-        userSkills={userSkills}
-        skillModal={skillModal}
-        setSkillModal={setSkillModal}
-        setUserSkills={setUserSkills}
-        userCategories={userCategories}
-        setUserCategories={setUserCategories}
-      />
-      {skillModal && (
-        <SkillModal
-          skillModal={skillModal}
-          setSkillModal={setSkillModal}
-          toggleSkillModal={toggleSkillModal}
-          userCategories={userCategories}
-          userSkills={userSkills}
-          setUserSkills={setUserSkills}
-          budgetLinkedin={budgetLinkedin}
-          setBudgetLinkedin={setBudgetLinkedin}
-        />
-      )}
-      {budgetLinkedin && (
+      <FileModal />
+      <ProfileModal />
+      <CategoryModal />
+      {useSelector((store) => store.modal.skillModal) && <SkillModal />}
+      {useSelector((store) => store.modal.budgetLinkedin) && (
         <BudgetLinkedinModal
           budgetLinkedin={budgetLinkedin}
           setBudgetLinkedin={setBudgetLinkedin}

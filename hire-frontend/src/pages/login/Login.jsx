@@ -46,6 +46,10 @@ export default function Login() {
       setEmail("");
 
       setPassword("");
+      localStorage.setItem("name", currentUser.user_name);
+      localStorage.setItem("role", currentUser.role);
+      localStorage.setItem("user_id", currentUser.user_id);
+      localStorage.setItem("token", currentUser.token);
       navigate("/");
     } catch (e) {
       alert(e);

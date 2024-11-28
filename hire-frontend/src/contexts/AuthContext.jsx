@@ -4,10 +4,10 @@ import { createRoutesFromChildren } from "react-router-dom";
 const UserContext = createContext(null);
 
 const initialUser = {
-  name: null,
-  role: null,
-  user_id: null,
-  token: null,
+  name: localStorage.getItem("name") || null,
+  role: localStorage.getItem("role") || null,
+  user_id: localStorage.getItem("user_id") || null,
+  token: localStorage.getItem("authToken") || null,
 };
 
 function userReducer(state, action) {
@@ -22,6 +22,10 @@ function userReducer(state, action) {
         user_id: payload.user_id,
       };
     case "LOGOUT":
+      localStorage.removeItem("name");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("token");
       return { ...state, name: null, role: null, token: null, user_id: null };
     default:
       console.log("Unknown User Action");
@@ -32,6 +36,10 @@ function AuthProvider({ children }) {
   function UserLogin(user) {
     alert("CALLED");
     dispatch({ type: "LOGIN", payload: user });
+    localStorage.setItem("name", user.user_name);
+    localStorage.setItem("role", user.role);
+    localStorage.setItem("user_id", user.user_id);
+    localStorage.setItem("authToken", user.token);
   }
   function UserLogout() {
     dispatch({ type: "LOGOUT" });

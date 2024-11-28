@@ -6,16 +6,13 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuthContext } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
-export default function CategoryModal({
-  categoryModal,
-  setCategoryModal,
-  toggleCategoryModal,
+import { useSelector, useDispatch } from "react-redux";
+import { setUserCategories } from "../../redux/signUpDataSlice";
 
-  SkillModal,
-  userCategories,
-  setUserCategories,
-  setSkillModal,
-}) {
+import { closeCategoryModal } from "../../redux/modalSlice";
+import { openSkillModal } from "../../redux/modalSlice";
+
+export default function CategoryModal() {
   const { data: categories, isLoading } = useQuery({
     queryFn: getCategories,
     queryKey: ["categories"],
@@ -26,7 +23,12 @@ export default function CategoryModal({
   const [search, setSearch] = useState("");
   const { userState } = useAuthContext();
   const { user_id, token } = userState;
+  const userCategories = useSelector(
+    (store) => store.signUpDetails.userCategories
+  );
 
+  const categoryModal = useSelector((store) => store.modal.categoryModal);
+  const dispatch = useDispatch();
   const SubmitCategories = useMutation({
     mutationFn: (categories) => {
       axios.post(
@@ -47,9 +49,9 @@ export default function CategoryModal({
       toast.success("Your Interests Have Been Updated", {
         duration: 3000,
       });
-      setUserCategories((userCategories) => selectedCategories);
-      setSkillModal(true);
-      setCategoryModal(false);
+      dispatch(setUserCategories(selectedCategories));
+      dispatch(openSkillModal());
+      dispatch(closeCategoryModal());
     },
     onError: () => {
       toast.error("Some error saving details", {
@@ -82,7 +84,9 @@ export default function CategoryModal({
     <Modal
       contentLabel="Select Categories"
       className={styles.box}
-      onRequestClose={toggleCategoryModal}
+      onRequestClose={(e) => {
+        dispatch(closeCategoryModal());
+      }}
       isOpen={categoryModal}
     >
       <h3>Select Categories You Are Interested In</h3>
@@ -108,7 +112,12 @@ export default function CategoryModal({
         selectedCategories={selectedCategories}
         setSelectedCategories={setSelectedCategories}
       />
-      <button onClick={toggleCategoryModal} className={styles.closeButton}>
+      <button
+        onClick={(e) => {
+          dispatch(closeCategoryModal());
+        }}
+        className={styles.closeButton}
+      >
         &times;
       </button>
       <button
