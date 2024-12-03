@@ -6,8 +6,14 @@ const {
   AddSkills,
   BidPosting,
   BidDetails,
+  insertFoundSkills,
+  CreateGig,
+  AddGigSkills,
 } = require("../controllers/FreelancerController");
-const { generateBidProposal } = require("../controllers/AIControllers");
+const {
+  extractSkills,
+  findSimilarSkills,
+} = require("../controllers/AIControllers");
 const { AuthUser } = require("../controllers/UserController");
 const WrapAsync = require("../utils/WrapAsync");
 const FreelancerRouter = express.Router();
@@ -59,55 +65,17 @@ FreelancerRouter.post(
   }
 );
 
-FreelancerRouter.get("/generateProposal", async (req, res, next) => {
-  const { user_id, job_description } = req.body;
-  try {
-    // Fetch skill_ids for the freelancer
-    const freelancerSkillsData = await Freelancer_Skills.findAll({
-      attributes: ["skill_id"], // Use the string 'skill_id'
-      where: { user_id: user_id },
-    });
-
-    // Extract skill_ids from the results
-    const skillIds = freelancerSkillsData.map((skill) => skill.skill_id);
-
-    // Fetch the skill names based on the skill_ids
-    const skillNames = await Skills.findAll({
-      attributes: ["skill_name"], // Use the string 'skill_name'
-      where: { skill_id: skillIds }, // skill_id should be an array for `IN` condition
-    });
-
-    // Convert skill names into a comma-separated string
-    const freelancerSkills = skillNames
-      .map((skill) => skill.skill_name)
-      .join(", ");
-
-    console.log("The skills of the freelancer are:", freelancerSkills);
-
-    // Fetch the freelancer profile
-    const freelancerProfileData = await Freelancer.findOne({
-      attributes: ["profile"], // Use the string 'profile'
-      where: { user_id: user_id },
-    });
-
-    const freelancerProfile = freelancerProfileData
-      ? freelancerProfileData.profile
-      : "";
-
-    console.log("The profile of the freelancer is:", freelancerProfile);
-
-    // Call the function to generate the bid proposal
-    await generateBidProposal(
-      job_description,
-      freelancerSkills,
-      freelancerProfile
-    );
-
-    res.status(200).send("Bid proposal generated successfully");
-  } catch (e) {
-    console.error("Error:", e);
-    next(e);
-  }
-});
-
+FreelancerRouter.get(
+  "/profileUser",
+  WrapAsync(extractSkills),
+  WrapAsync(findSimilarSkills),
+  WrapAsync(insertFoundSkills)
+);
+FreelancerRouter.get(
+  "/createGig",
+  WrapAsync(CreateGig),
+  WrapAsync(extractSkills),
+  WrapAsync(findSimilarSkills),
+  WrapAsync(AddGigSkills)
+);
 module.exports = FreelancerRouter;

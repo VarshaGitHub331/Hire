@@ -29,7 +29,19 @@ const User_Messages = require("../models/UserMessages.js")(
   sequelize,
   DataTypes
 );
+const Gigs = require("../models/Gigs.js")(sequelize, DataTypes);
+const Gig_Categories = require("../models/Gigs_Categories.js")(
+  sequelize,
+  DataTypes
+);
+const Gig_Skills = require("../models/Gig_Skills.js")(sequelize, DataTypes);
+const Freelancer_Gigs = require("../models/Freelancer_Gigs.js")(
+  sequelize,
+  DataTypes
+);
 console.log(Bids);
+console.log("The gigs are here");
+console.log(Gigs);
 module.exports = {
   User,
   Client,
@@ -37,6 +49,7 @@ module.exports = {
   Freelancer_Category,
   Freelancer_Skills,
   Freelancer,
+  Freelancer_Gigs,
   Job_Categories,
   Job_Skills,
   Order,
@@ -48,4 +61,7 @@ module.exports = {
   Conversation,
   Messages,
   User_Messages,
+  Gigs,
+  Gig_Categories,
+  Gig_Skills,
 };

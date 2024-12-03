@@ -7,7 +7,16 @@ const {
   Bids,
   Job_Postings,
   Skills,
+  Gigs,
+  Freelancer_Gigs,
+  Gig_Categories,
+  Gig_Skills,
 } = require("../utils/InitializeModels");
+const sequelize = require("../utils/Connection.js");
+const { raw } = require("mysql2");
+if (Gigs !== undefined) {
+  console.log("NOT UNDEFINED");
+}
 const UpdateProfile = (req, res, next) => {
   const { resume_url, profile, linkedin, cost, user_id } = req.body;
   if (!user_id) {
@@ -129,11 +138,79 @@ const BidDetails = async (req, res, next) => {
     next(e);
   }
 };
+const insertFoundSkills = async (req, res, next) => {
+  const { user_id } = req.body;
+  console.log("I am here in ");
+  const extractedSkills = req.body.extracted_skills;
+  for (let extractedSkill of extractedSkills) {
+    let skill = await Skills.findOne({
+      attributes: ["skill_id", "category_id"],
+      where: { skill_name: extractedSkill },
+      raw: true,
+    });
 
+    await Freelancer_Skills.create({ user_id, skill_id: skill.skill_id });
+    let found = await Freelancer_Category.findOne({
+      where: {
+        user_id: user_id,
+        category_id: skill.category_id,
+      },
+      raw: true,
+    });
+    if (!found) {
+      await Freelancer_Category.create({
+        user_id,
+        category_id: skill.category_id,
+      });
+      console.log(
+        "Inserted freelancer category into the freelancer_categories table"
+      );
+    }
+  }
+  res.status(202).json("Inserted extracted skills");
+};
+const CreateGig = async (req, res, next) => {
+  const { title, description, user_id, category_id } = req.body;
+  const gig = await Gigs.create({ title, description, raw: true });
+  console.log("Created a new Gig");
+
+  const freelancerGig = await Freelancer_Gigs.create({
+    gig_id: gig.gig_id,
+    user_id,
+  });
+  console.log("Created freelancer gig");
+  const gigCat = await Gig_Categories.create({
+    gig_id: gig.gig_id,
+    category_id: category_id,
+  });
+  req.body.gig_id = gig.gig_id;
+  console.log("Created gig category");
+  req.body.extractText = description;
+  next();
+};
+const AddGigSkills = async (req, res, next) => {
+  const skillsToAdd = req.body.extracted_skills;
+  const { user_id, gig_id } = req.body;
+  for (let skillToAdd of skillsToAdd) {
+    let skill = await Skills.findOne({
+      attributes: ["skill_id"],
+      where: {
+        skill_name: skillToAdd,
+      },
+      raw: true,
+    });
+    await Gig_Skills.create({ gig_id, skill_id: skill.skill_id });
+    console.log("Gig skill created");
+  }
+  res.status(200).json("Done populating for gigs");
+};
 module.exports = {
   UpdateProfile,
   UpdateCategories,
   AddSkills,
   BidPosting,
   BidDetails,
+  CreateGig,
+  AddGigSkills,
+  insertFoundSkills,
 };

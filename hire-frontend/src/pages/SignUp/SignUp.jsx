@@ -29,12 +29,6 @@ export default function SignUp() {
   const resumeUrl = useSelector((store) => store.signUpDetails.resumeUrl);
   const profile = useSelector((store) => store.signUpDetails.profile);
 
-  function toggleCategoryModal() {
-    setCategoryModal(!categoryModal);
-  }
-  function toggleSkillModal() {
-    setSkillModal(!skillModal);
-  }
   function toggleBudgetLinkedin() {
     setBudgetLinkedin(!budgetLinkedin);
   }
@@ -119,7 +113,7 @@ export default function SignUp() {
   const dispatch = useDispatch();
   return (
     <>
-      {step === 1 && !token && (
+      {step === 1 && !user_id && (
         <div className={styles.SignUp}>
           <h4>Join Hire.</h4>
           <form onSubmit={handleSubmit}>
